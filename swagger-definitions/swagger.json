@@ -9,7 +9,7 @@
     "schemes": [
         "http"
     ],
-    "basePath": "/v1",
+    "basePath": "/api/v1",
     "produces": [
         "application/json"
     ],
@@ -32,12 +32,6 @@
                 "summary": "Return a list of users",
                 "operationId": "getUsers",
                 "parameters": [
-                    {
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true,
-                        "type": "string"
-                    }
                 ],
                 "responses": {
                     "200": {
@@ -64,12 +58,6 @@
                 "summary": "Creates a new user.",
                 "operationId": "addUsers",
                 "parameters": [
-                    {
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true,
-                        "type": "string"
-                    },
                     {
                         "in": "body",
                         "required": true,
@@ -104,12 +92,6 @@
                 "operationId": "getUserById",
                 "parameters": [
                     {
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
                         "name": "id",
                         "in": "path",
                         "description": "Id of the user to retrive information",
@@ -139,12 +121,6 @@
                 "summary": "Update user.",
                 "operationId": "updateUserById",
                 "parameters": [
-                    {
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true,
-                        "type": "string"
-                    },
                     {
                         "name": "id",
                         "in": "path",
@@ -184,12 +160,6 @@
                 "operationId": "deleteUserById",
                 "parameters": [
                     {
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
                         "name": "id",
                         "in": "path",
                         "description": "ID of the user to delete",
@@ -209,24 +179,301 @@
                     }
                 }
             }
-        }
-    },
-    "definitions": {
-        "GoogleToken": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string",
-                    "description": "Google token."
+        },
+        "/usuarios/{id_usuario}/locations": {
+            "get": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Return a list of locations",
+                "operationId": "getUserLocations",
+                "parameters": [
+                    {
+                        "name": "id_usuario",
+                        "in": "path",
+                        "description": "Id of the user to retrive information",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of locations",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Location"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Creates a new location.",
+                "operationId": "addUsersLocation",
+                "parameters": [
+                    {
+                        "name": "id_usuario",
+                        "in": "path",
+                        "description": "Id of the user to post information",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "required": true,
+                        "name": "location",
+                        "schema": {
+                            "$ref": "#/definitions/Location"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Location created",
+                        "schema": {
+                            "$ref": "#/definitions/Location"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
                 }
             }
         },
-        "Token": {
+        "/usuarios/{id_usuario}/locations/{id}": {
+            "get": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Return a location details",
+                "operationId": "getUserLocationById",
+                "parameters": [
+                    {
+                        "name": "id_usuario",
+                        "in": "path",
+                        "description": "Id of the user to retrieve information",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the location to retrieve information",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An location information",
+                        "schema": {
+                            "$ref": "#/definitions/Location"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Update location.",
+                "operationId": "updateUserLocationById",
+                "parameters": [
+                    {
+                        "name": "id_usuario",
+                        "in": "path",
+                        "description": "Id of the user to update information",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the location to update information",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "location",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Location"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated location",
+                        "schema": {
+                            "$ref": "#/definitions/Location"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Delete location.",
+                "operationId": "deleteUserLocationById",
+                "parameters": [
+                    {
+                        "name": "id_usuario",
+                        "in": "path",
+                        "description": "Id of the user to delete information",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the location to delete information",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted location"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
+
+    },
+    "definitions": {
+        "User": {
             "type": "object",
             "properties": {
-                "token": {
+                "f_Name": {
                     "type": "string",
-                    "description": "JWT token."
+                    "description": "Google token.",
+                    "required": true
+                },
+                "l_Name": {
+                    "type": "string",
+                    "description": "Google token.",
+                    "required": true
+                },
+                "email": {
+                    "type": "string",
+                    "description": "unique value",
+                    "required": true
+                },
+                "birth_date": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Google token.",
+                    "required": true
+                },
+                "n_user": {
+                    "type": "string",
+                    "description": "Google token.",
+                    "required": true
+                },
+                "tel": {
+                    "type": "Number",
+                    "description": "Google token.",
+                    "required": true
+                },
+                "devices": {
+                    "schema":{
+                        "type": "array", 
+                        "items": {
+                            "marca": {
+                                "type": "string",
+                                "description": "",
+                                "required": true
+                            },
+                            "n_serie": {
+                                "type": "string",
+                                "description": "unique value",
+                                "required": true
+                            },
+                            "modelo": {
+                                "type": "string",
+                                "description": "unique value",
+                                "required": true
+                            },
+                            "f_asign": {
+                                "type": "dateTime",
+                                "description": "unique value",
+                                "required": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "Location": {
+            "type": "object",
+            "properties": {
+                "nombre": {
+                    "type": "string",
+                    "description": "Google token.",
+                    "required": true
+                },
+                "calle": {
+                    "type": "string",
+                    "description": "",
+                    "required": true
+                },
+                "colonia": {
+                    "type": "string",
+                    "description": "",
+                    "required": true
+                },
+                "cp": {
+                    "type": "string",
+                    "description": "",
+                    "required": true
+                },
+                "ciudad": {
+                    "type": "string",
+                    "description": "",
+                    "required": true
+                },
+                "estado": {
+                    "type": "string",
+                    "description": "",
+                    "required": true
+                },
+                "pais": {
+                    "type": "string",
+                    "description": "",
+                    "required": true
                 }
             }
         },
@@ -253,31 +500,6 @@
                 "slug": {
                     "type": "string",
                     "description": "Feeling slug."
-                }
-            }
-        },
-        "User": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "description": "KIO user email."
-                },
-                "name": {
-                    "type": "string",
-                    "description": "KIO user name."
-                },
-                "position": {
-                    "type": "string",
-                    "description": "KIO user position."
-                },
-                "location": {
-                    "type": "string",
-                    "description": "KIO user position."
-                },
-                "avatar": {
-                    "type": "string",
-                    "description": "KIO user avatar."
                 }
             }
         },
@@ -383,15 +605,6 @@
                 "name": {
                     "type": "string",
                     "description": "Area name."
-                }
-            }
-        },
-        "Location": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string",
-                    "description": "User location name."
                 }
             }
         },

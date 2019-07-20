@@ -1,8 +1,6 @@
 'use strict'
 
 var User = require('../models/user');
-var getSlug = require('speakingurl');
-var config = require('config');
 
 /***************************************
 *
@@ -12,17 +10,18 @@ var config = require('config');
 *
 ***************************************/
 
+//Request body cuando hacemos un post o path
+//Requuest params cuando hacemos peticion desde la url
 exports.getUsers = function(req,res){
 	/**
 	* Return a list of KIO user
 	*
 	* returns User
 	**/
-	User.find({}).sort({name: 1}).exec(function(err, data){
+	User.find({}).sort({f_Name: 1}).exec(function(err, data){
 		res.send({data: data});
 	});
 }
-
 exports.getUserById = function(req,res,next){
 	/**
 	* Return a KIO user information
@@ -43,7 +42,6 @@ exports.getUserById = function(req,res,next){
 	});
 	
 }
-
 exports.addUser = function(req,res,next){
 	/**
 	* Creates a new user.
@@ -52,11 +50,12 @@ exports.addUser = function(req,res,next){
 	* returns User
 	**/
 	var user = new User();
-	var params = req.body;
-
-	
+	Object.keys(req.body).forEach(key => { 
+        user[key] = req.body[key];
+	});
 	user.save( (err, userStored) => {
 		if(err){
+			console.log(err);
 			next({status: 200, message: 'User already exists.'});
 		} else {
 			if(userStored)
@@ -66,10 +65,7 @@ exports.addUser = function(req,res,next){
 			}
 		}
 	});
-
 }
-
-
 exports.updateUserById = function(req,res,next){
 	/**
 	* Delete KIO user.
@@ -78,24 +74,10 @@ exports.updateUserById = function(req,res,next){
 	* returns User
 	**/
 	var user = {};
-	var params = req.body;
-	if(params.email)
-		user.email = params.email;
-	if(params.name)
-		user.name = params.name;
-	if(params.position)
-		user.position = params.position;
-	if(params.location)
-		user.location = params.location;
-	if(params._location)
-		user._location = params._location;
-	if(params.area)
-		user.area = params.area;
-	if(params.avatar)
-		user.avatar = params.avatar;
-	//if(params.admin)
-		//user.admin = params.admin;
-
+	Object.keys(req.body).forEach( (key) => {
+		user[key] = req.body[key];
+	} );
+	
 	User.findByIdAndUpdate(req.params.id, {$set: user}, {new: true} ).exec((err, user) => {
 		if(err){
 			next({status: 200, message: 'Error updating user.'});
@@ -107,9 +89,7 @@ exports.updateUserById = function(req,res,next){
 			}
 		}
 	});
-	
 }
-
 exports.deleteUserById = function(req,res,next){
 	/**
 	* Delete user.
@@ -130,4 +110,44 @@ exports.deleteUserById = function(req,res,next){
 	});
 	
 }
-
+exports.addUserDevice = function(req,res,next){
+	var device = req.body;
+	//Buscar a los usuario
+	User.findByIdAndUpdate(req.params.id_usuario, {$push: {devices: device}}, {new: true} ).exec((err, user) => {
+			if(err){ console.log(err);
+				next({status: 200, message: 'Error adding device.'});
+			} else {
+				if(user)
+					res.send(device);
+				else{
+					next({status: 200, message: 'Error ading device.'});
+				}
+			}
+		});
+}
+exports.deleteUserDevice = function(req,res,next){
+	User.findByIdAndUpdate(req.params.id_usuario,{$pull: {devices: {_id:req.params.id}}},{ new: true }).exec((err, user) => {
+		if(err){ console.log(err);
+			next({status: 200, message: 'Error deleting device.'});
+		} else {
+			if(user)
+				res.send(user);
+			else{
+				next({status: 200, message: 'Error deleting device.'});
+			}
+		}
+	});	
+}
+exports.UpdateUserDevice = function(req,res,next){
+	User.update({'devices._id': req.params.id}, {$set: {'devices.$.marca': 'QWERTY'}}).exec((err, user) => {
+		if(err){ console.log(err);
+			next({status: 200, message: 'Error updatin device.'});
+		} else {
+			if(user)
+				res.send(user);
+			else{
+				next({status: 200, message: 'Error updating device.'});
+			}
+		}
+	});	
+}
